@@ -1,29 +1,26 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [mounted, setMounted] = useState<boolean>(false);
+  const { theme, setTheme, systemTheme } = useTheme();
+  const currentTheme = theme === "system" ? systemTheme : theme;
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    setDarkMode(savedTheme === 'dark');
+    setMounted(true);
   }, []);
 
-  const toggleTheme = () => {
-    const newTheme = !darkMode;
-    setDarkMode(newTheme);
-    localStorage.setItem('theme', newTheme ? 'dark' : 'light');
-    document.documentElement.classList.toggle('dark', newTheme);
-  };
+  if (!mounted) return null;
 
   return (
     <button
-      onClick={toggleTheme}
+      onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
       className="p-2 bg-gray-200 rounded dark:bg-gray-800"
       aria-label="Toggle Theme"
     >
-      {darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+      {currentTheme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
     </button>
   );
 }
